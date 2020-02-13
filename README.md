@@ -80,7 +80,7 @@ To test our compressor we ran experiments on the following datasets. The full in
  *hs2* | 50 | 193.920 | Human GM12878 Utah/Ceph cell line |
  *npd* | 336 | 113.440 | Multiple organisms |
 
-\*Datasets that require the SRA toolkit to download. 
+\*Datasets that require the SRA toolkit to be downloaded. 
 
 ### Downloading the datasets
 
@@ -100,10 +100,6 @@ cd EnanoFASTQ
 
 ### Examples
 
-To compress a synthetic sequence XOR-10. 
-
-#### NOTE: We have already provided some sample synthetic sequences (XOR-k and HMM-k) for test runs in [coding-gpu/files_to_be_compressed](./coding-gpu/files_to_be_compressed).
-
 #### Compress using ENANO
 To run the compressor with 4 threads on the example file:
 ```bash
@@ -114,11 +110,11 @@ enano/enano -s 8 -l 5 -t 4 example/SAMPLE.fastq example/SAMPLE.enano
 To decompress with 8 threads on the example file:
 ```bash
 cd EnanoFASTQ
-enano/enano -t 8 example/SAMPLE.enano example/SAMPLE_dec.fastq
+enano/enano -d -t 8 example/SAMPLE.enano example/SAMPLE_dec.fastq
 ```
 
 #### Check if decoding is successful
-
+The output has to be empty.
 ```bash
 cmp example/SAMPLE.fastq example/SAMPLE_dec.fastq
 ```
