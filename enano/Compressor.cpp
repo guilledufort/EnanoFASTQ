@@ -801,6 +801,8 @@ int Compressor::fq_compress(){
     out_p += sz3;
 
     comp_len = out_p - out;
+
+    return 0;
 }
 /* --------------------------------------------------------------------------
  * Decompression functions.
