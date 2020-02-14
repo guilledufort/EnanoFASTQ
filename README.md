@@ -5,7 +5,7 @@
 ENANO is a novel FASTQ compression algorithm especially designed for nanopore sequencing FASTQ files. We tested ENANO and current state-of-the-art compressors on several publicly available nanopore datasets. The results show that our algorithm consistently achieves the best compression performance on every nanopore dataset, while being computationally efficient in terms of speed and memory requirements when compared to existing alternatives.
 
 ## Requirements
-0. g++ 
+0. g++ ( >= 4.8)
 1. OpenMP library
 
 ## Download
@@ -69,18 +69,20 @@ To decompress:
 
 To test our compressor we ran experiments on the following datasets. The full information of the datasets is on our publication.
 
-| Dataset | # of files | size (GB) | Description |
-|------|------|------|------|
- *sor\** | 4 | 124.071 | Sorghum bicolor Tx430 |
- *bra\** | 4 | 43.014 | Doubled haploid canola (Brassica napus L.) |
- *lun* | 13 | 15.239 | Human lung bacterial  metagenomic |
- *joi* | 9 | 4.672 | Infected orthopaedic devices metagenomic |
- *vir\** | 10 | 4.375 | Direct RNA sequencing (HSV-1) |
- *hs1* | 1 | 249.791 | Human GM12878 Utah/Ceph cell line |
- *hs2* | 50 | 193.920 | Human GM12878 Utah/Ceph cell line |
- *npd* | 336 | 113.440 | Multiple organisms |
+| Dataset | # of files | size (GB) | Description | Link |
+|------|------|------|------|------|
+ *sor\** | 4 | 124.071 | Sorghum bicolor Tx430 | https://www.nature.com/articles/s41467-018-07271-1#data-availability |
+ *bra\** | 18 | 43.014 | Doubled haploid canola (Brassica napus L.) | https://www.nature.com/articles/s41598-019-45131-0#data-availability |
+ *lun* | 13 | 15.239 | Human lung bacterial  metagenomic | https://www.nature.com/articles/s41587-019-0156-5#data-availability |
+ *joi* | 9 | 4.672 | Infected orthopaedic devices metagenomic | https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-018-5094-y |
+ *vir\** | 10 | 4.375 | Direct RNA sequencing (HSV-1) | https://www.nature.com/articles/s41467-019-08734-9#data-availability |
+ *hs1* | 1 | 249.791 | Human GM12878 Utah/Ceph cell line | https://github.com/nanopore-wgs-consortium/NA12878 |
+ *hs2^* | 50 | 193.920 | Human GM12878 Utah/Ceph cell line | https://www.nature.com/articles/s41467-019-09637-5#data-availability|
+ *npd\** | 336 | 113.440 | Multiple organisms | https://github.com/guidufort/DualFqz |
 
 \*Datasets that require the SRA toolkit to be downloaded. 
+
+^We only used the first 50 files of the dataset.
 
 ### Downloading the datasets
 
@@ -91,7 +93,17 @@ cd EnanoFASTQ
 dataset/sor/download_script.sh
 ```
 
-Some datasets require for the SRA toolkit to be downloaded, and for the toolkit folder to be copied to the EnanoFASTQ directory. To install the SRA toolkit you can follow the instructions here https://ncbi.github.io/sra-tools/install_config.html, or you can run one of the scripts we built. There is a different script for each OS, so you have to choose the one corresponding to your OS.
+The scripts use the command *wget* to perform the download. 
+To install *wget* on macOS run:
+ ```bash
+brew install wget
+```
+To install *wget* on Ubuntu or CentOS run:
+ ```bash
+sudo apt-get install wget
+```
+
+Some datasets require the SRA toolkit (2.9.6-1 release) to be downloaded. To install the SRA toolkit you can follow the instructions here https://ncbi.github.io/sra-tools/install_config.html, and place the toolkit's root-folder under the EnanoFASTQ directory, or you can run one of the scripts we built. There is a different script for each OS, so you have to choose the one corresponding to your OS.
 For example, to install the SRA toolkit on macOS you can run:
  ```bash
 cd EnanoFASTQ
@@ -107,7 +119,7 @@ cd EnanoFASTQ
 enano/enano -s 8 -l 5 -t 4 example/SAMPLE.fastq example/SAMPLE.enano
 ```
 #### Decompress using ENANO
-To decompress with 8 threads on the example file:
+To decompress with 8 threads the example compressed file:
 ```bash
 cd EnanoFASTQ
 enano/enano -d -t 8 example/SAMPLE.enano example/SAMPLE_dec.fastq
@@ -118,3 +130,5 @@ The output has to be empty.
 ```bash
 cmp example/SAMPLE.fastq example/SAMPLE_dec.fastq
 ```
+### Credits
+The methods used for encoding the reads names, model frequency counters, and to do the reads parsing, are the ones proposed by James Bonefield in FQZComp, with some modifications. The range coder is derived from Eugene Shelwien.
