@@ -33,16 +33,10 @@ brew update
 brew install gcc@9
 ```
 
-- Set environment variables:
-```bash
-export CC=gcc-9
-export CXX=g++-9
-```
-
 To compile enano run:
 ```bash
 cd EnanoFASTQ/enano
-g++ -fopenmp enano_fastq.cpp Compressor.cpp -o enano
+make
 ```
 
 # USAGE
