@@ -36,7 +36,7 @@ void init_global_stats(context_models* cm) {
         }
     }
 
-    memset(ctx_err_avgs_total, 1 << TOTAL_ERR_SHIFT, Q_CTX * sizeof(uint16_t));
+    memset(ctx_err_avgs_total, 1 << TOTAL_ERR_SHIFT, Q_CTX * sizeof(uint32_t));
 }
 
 void delete_global_stats(context_models* cm) {
