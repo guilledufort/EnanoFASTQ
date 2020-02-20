@@ -225,7 +225,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
     double start_time = omp_get_wtime();
     double enc_time = 0, code_time = 0, load_time = 0, write_time = 0, update_time = 0;
 
-    printf("Start encoding in FAST MODE with %d threads... \n", p->num_threads);
+    printf("Starting encoding in FAST MODE with %d threads... \n", p->num_threads);
 
     int blk_start = 0;
     uint block_num = 0;
@@ -240,7 +240,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
         comps[i] = new Compressor(p);
     }
 
-    printf("Starting adaptative encoding for %d blocks, and update every %d blocks \n", BLK_UPD_THRESH, BLK_UPD_FREQ);
+    printf("Starting adaptative encoding for %d (%d + 1) blocks, and update every %d blocks... \n", BLK_UPD_THRESH, BLK_UPD_THRESH - 1, BLK_UPD_FREQ);
 
     bool finished = false;
 
@@ -287,7 +287,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
 
     delete [] update_batches;
 
-    printf("Starting fixed encoding...\n");
+    printf("Starting parallelized fast encoding...\n");
     //Update context models accumulated probabilities.
     comps[0]->update_AccFreqs(cm, decode);
     //No updates from now on
@@ -333,7 +333,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
         block_num += blocks_loaded;
     }
 
-    printf("Total blocks: %d \n", block_num);
+    printf("Total encoded blocks: %d \n", block_num);
 
     long long name_in = 0, name_out = 0, base_in = 0, base_out = 0, qual_in = 0, qual_out = 0;
     for (uint i = 0; i < cant_compressors; i++) {
@@ -354,6 +354,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
 
     enc_time = omp_get_wtime() - start_time;
 
+#ifdef __TIMING__
     fprintf(stdout, "Update models: %.2f s\n",
             (double)update_time);
     fprintf(stdout, "Load time: %.2f s\n",
@@ -362,6 +363,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
             (double)code_time);
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
+#endif
     fprintf(stdout, "Total time: %.2f s\n",
             (double)enc_time);
 
@@ -382,7 +384,7 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     double start_time = omp_get_wtime();
     double enc_time = 0, code_time = 0, load_time = 0, write_time = 0, update_time = 0;
 
-    printf("Start encoding max compression mode... \n");
+    printf("Starting encoding in Max Compression mode... \n");
 
     int blk_start = 0;
     uint block_num = 0;
@@ -404,7 +406,7 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
         block_num += blocks_loaded;
     }
 
-    printf("Total blocks: %d \n", block_num);
+    printf("Total encoded blocks: %d \n", block_num);
 
     long long name_in = 0, name_out = 0, base_in = 0, base_out = 0, qual_in = 0, qual_out = 0;
     name_in += comps[0]->name_in;
@@ -420,6 +422,7 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
 
     enc_time = omp_get_wtime() - start_time;
 
+#ifdef __TIMING__
     fprintf(stdout, "Update models: %.2f s\n",
             (double)update_time);
     fprintf(stdout, "Load time: %.2f s\n",
@@ -428,6 +431,7 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
             (double)code_time);
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
+#endif
     fprintf(stdout, "Total time: %.2f s\n",
             (double)enc_time);
 
@@ -506,7 +510,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
     double start_time = omp_get_wtime();
     double dec_time = 0, decode_time = 0, load_time = 0, write_time = 0, update_time = 0;
 
-    printf("Start decoding with %d threads... \n", p->num_threads);
+    printf("Starting decoding with %d threads... \n", p->num_threads);
 
     uint block_num = 0;
 
@@ -521,7 +525,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
         comps[i]->decode_buf = new char[BLK_SIZE];
     }
 
-    printf("Starting simple decoding and context model update... \n");
+    printf("Starting decoding with context model update... \n");
 
     bool finished = false;
 
@@ -566,7 +570,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
 
     delete [] update_batches;
 
-    printf("Starting parallelized decoding... \n");
+    printf("Starting parallelized fast decoding... \n");
 
     //Update context models accumulated probabilities.
     comps[0]->update_AccFreqs(cm, decode);
@@ -621,8 +625,9 @@ int decode(int in_fd, int out_fd, enano_params* p) {
 
     dec_time = omp_get_wtime() - start_time;
 
-    printf("Total blocks: %d (%d update)\n", block_num, BLK_UPD_THRESH);
+    printf("Total decoded blocks: %d\n", block_num, BLK_UPD_THRESH);
 
+#ifdef __TIMING__
     fprintf(stdout, "Update models: %.2f s\n",
             (double)update_time);
     fprintf(stdout, "Load time: %.2f s\n",
@@ -631,6 +636,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
             (double)decode_time);
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
+#endif
     fprintf(stdout, "Total time: %.2f s\n",
             (double)dec_time);
 
@@ -642,7 +648,7 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
     double start_time = omp_get_wtime();
     double dec_time = 0, decode_time = 0, load_time = 0, write_time = 0, update_time = 0;
 
-    printf("Start decoding max compression mode... \n");
+    printf("Starting decoding Max Compression mode... \n");
 
     uint block_num = 0;
 
@@ -671,8 +677,9 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
 
     dec_time = omp_get_wtime() - start_time;
 
-    printf("Total blocks: %d\n", block_num);
+    printf("Total decoded blocks: %d\n", block_num);
 
+#ifdef __TIMING__
     fprintf(stdout, "Update models: %.2f s\n",
             (double)update_time);
     fprintf(stdout, "Load time: %.2f s\n",
@@ -681,6 +688,7 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
             (double)decode_time);
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
+#endif
     fprintf(stdout, "Total time: %.2f s\n",
             (double)dec_time);
 
@@ -701,7 +709,7 @@ static void usage(int err) {
 
     fprintf(fp, "To compress:\n  enano [options] [input_file [output_file]]\n\n");
     fprintf(fp, "    -c             To use MAX COMPRESION MODE. Default is FAST MODE.\n\n");
-    fprintf(fp, "    -s <length>    Base sequence context length. Default is 7.\n\n");
+    fprintf(fp, "    -s <length>    Base sequence context length. Default is 7 (max 13).\n\n");
     fprintf(fp, "    -l <lenght>    Length of the DNA sequence context. Default is 6.\n\n");
     fprintf(fp, "    -t <num>       Maximum number of threads allowed to use by the compressor. Default is 8.\n\n");
 
@@ -739,7 +747,7 @@ int main (int argc, char **argv) {
             case 's': {
                 char *end;
                 p.slevel = strtol(optarg, &end, 10);
-                if (p.slevel < 0 || p.slevel > 9)
+                if (p.slevel < 0 || p.slevel > 13)
                     usage(1);
                 break;
             }
@@ -800,7 +808,7 @@ int main (int argc, char **argv) {
             fprintf(stderr, "Abort: truncated read.\n");
             return 1;
         }
-        if (memcmp(".duf", magic, 4) != 0) {
+        if (memcmp(".ena", magic, 4) != 0) {
             fprintf(stderr, "Unrecognised file format.\n");
             return 1;
         }
@@ -811,7 +819,7 @@ int main (int argc, char **argv) {
         }
 
         p.slevel = magic[5] & 0x0f;
-        if (p.slevel > 9 || p.slevel < 1) {
+        if (p.slevel > 13 || p.slevel < 1) {
             fprintf(stderr, "Unexpected quality compression level %d\n",
                     p.slevel);
             return 1;
@@ -823,7 +831,7 @@ int main (int argc, char **argv) {
 
         p.blk_upd_thresh = magic[8] & 0xff;
 
-        printf("slevel: %d, llevel: %d, blk_upd_thresh: %d \n", p.slevel, p.llevel, p.blk_upd_thresh);
+        printf("Parameters - s: %d, l: %d, b: %d \n", p.slevel, p.llevel, p.blk_upd_thresh);
 
         B_CTX_LEN = p.llevel;
         B_CTX = (1 << (B_CTX_LEN * A_LOG));
@@ -841,7 +849,7 @@ int main (int argc, char **argv) {
 #ifdef __DEBUG_LOG__
         fp_log_debug = fopen("encode_log.txt", "wt");
 #endif
-        unsigned char magic[9] = {'.', 'd', 'u', 'f',
+        unsigned char magic[9] = {'.', 'e', 'n', 'a',
                                   MAJOR_VERS,
                                   (unsigned char) p.slevel, (unsigned char) p.llevel, (unsigned char) p.max_comp, (unsigned char) p.blk_upd_thresh
         };
@@ -851,7 +859,7 @@ int main (int argc, char **argv) {
             return 1;
         }
 
-        printf("slevel: %d, llevel: %d, blk_upd_thresh: %d \n", p.slevel, p.llevel, p.blk_upd_thresh);
+        printf("Parameters - s: %d, l: %d, b: %d \n", p.slevel, p.llevel, p.blk_upd_thresh);
 
         B_CTX_LEN = p.llevel;
         B_CTX = (1 << (B_CTX_LEN * A_LOG));

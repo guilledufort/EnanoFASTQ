@@ -2,10 +2,7 @@
 // Created by gdufort on 6/28/19.
 //
 
-#ifndef FQZCOMP_4_6_NANO_PARAMETERS_H
-#define FQZCOMP_4_6_NANO_PARAMETERS_H
-
-#define BLK_SIZE 10000000
+#define BLK_SIZE 10000000 //10 MB
 
 //Default parameters
 #define DEFAULT_S_LEVEL 7
@@ -13,8 +10,6 @@
 #define DEFAULT_THREADS_NUM 8
 #define DEFAULT_BLK_UPD_THRESH 32
 #define DEFAULT_BLK_UPD_FREQ 4
-
-//#define TIMING
 
 //#define __TIMING__
 //#define __ORDER_SYMBOLS__
@@ -84,4 +79,3 @@ static const unsigned int pow5[] = {
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 #define ABS(N) ((N<0)?(-N):(N))
-#endif //FQZCOMP_4_6_NANO_PARAMETERS_H
