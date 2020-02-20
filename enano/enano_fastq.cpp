@@ -474,10 +474,12 @@ bool load_data_decode(int in_fd, Compressor ** comps, int update_load, uint &blo
                 fprintf(stderr, "Abort: read failed, %d.\n", errno);
                 perror("foo");
                 res = -1;
+                goto error;
             }
             if (tmp_len == 0) {
                 fprintf(stderr, "Abort: truncated read, %d.\n", errno);
                 res = -1;
+                goto error;
             }
             rem_len -= tmp_len;
             in_off += tmp_len;
@@ -486,7 +488,7 @@ bool load_data_decode(int in_fd, Compressor ** comps, int update_load, uint &blo
         blocks_loaded++;
         comp_id++;
     }
-
+    error:
     return blocks_loaded <= 0 || res == -1;
 }
 
@@ -509,6 +511,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
     bool decode = true;
     double start_time = omp_get_wtime();
     double dec_time = 0, decode_time = 0, load_time = 0, write_time = 0, update_time = 0;
+    double clock = 0;
 
     printf("Starting decoding with %d threads... \n", p->num_threads);
 
@@ -558,6 +561,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
             if (comps[i]->uncomp_len != write(out_fd, comps[i]->out_buf, comps[i]->uncomp_len)) {
                 fprintf(stderr, "Abort: truncated write.\n");
                 res = -1;
+                goto finishdecode;
             }
         }
         update_stats(cm, comps, blocks_loaded);
@@ -570,58 +574,55 @@ int decode(int in_fd, int out_fd, enano_params* p) {
 
     delete [] update_batches;
 
-    printf("Starting parallelized fast decoding... \n");
+    if (!finished) {
 
-    //Update context models accumulated probabilities.
-    comps[0]->update_AccFreqs(cm, decode);
-    //No updates from now on
-    for (uint i = 0; i < cant_compressors; i++) {
-        comps[i]->updateModel = false;
-        delete comps[i]->cm;
-        comps[i]->cm = cm;
-    }
+        printf("Starting parallelized fast decoding... \n");
 
-    //Finished updating the models
-    update_time += omp_get_wtime() - start_time;
-
-    //Parallelized decompression with fixed stats
-    double clock = 0;
-    while (!finished) {
-
-        uint blocks_loaded = 0;
-
-        clock = omp_get_wtime();
-        finished = load_data_decode(in_fd, comps, cant_compressors, blocks_loaded);
-        load_time += omp_get_wtime() - clock;
-
-        clock = omp_get_wtime();
-        #pragma omp parallel for
-        for (uint i = 0; i < blocks_loaded; i ++) {
-            comps[i]->soft_reset();
-            copy_average_stats(comps[i]);
-            comps[i]->fq_decompress();
+        //Update context models accumulated probabilities.
+        comps[0]->update_AccFreqs(cm, decode);
+        //No updates from now on
+        for (uint i = 0; i < cant_compressors; i++) {
+            comps[i]->updateModel = false;
+            delete comps[i]->cm;
+            comps[i]->cm = cm;
         }
-        decode_time += omp_get_wtime() - clock;
 
-        clock = omp_get_wtime();
-        for (uint i = 0; i < blocks_loaded; i ++) {
-            if (comps[i]->uncomp_len != write(out_fd, comps[i]->out_buf, comps[i]->uncomp_len)) {
-                fprintf(stderr, "Abort: truncated write.\n");
-                res = -1;
+        //Finished updating the models
+        update_time += omp_get_wtime() - start_time;
+
+        //Parallelized decompression with fixed stats
+        while (!finished) {
+
+            uint blocks_loaded = 0;
+
+            clock = omp_get_wtime();
+            finished = load_data_decode(in_fd, comps, cant_compressors, blocks_loaded);
+            load_time += omp_get_wtime() - clock;
+
+            clock = omp_get_wtime();
+            #pragma omp parallel for
+            for (uint i = 0; i < blocks_loaded; i ++) {
+                comps[i]->soft_reset();
+                copy_average_stats(comps[i]);
+                comps[i]->fq_decompress();
             }
+            decode_time += omp_get_wtime() - clock;
+
+            clock = omp_get_wtime();
+            for (uint i = 0; i < blocks_loaded; i ++) {
+                if (comps[i]->uncomp_len != write(out_fd, comps[i]->out_buf, comps[i]->uncomp_len)) {
+                    fprintf(stderr, "Abort: truncated write.\n");
+                    res = -1;
+                    goto finishdecode;
+                }
+            }
+            write_time += omp_get_wtime() - clock;
+
+            block_num += blocks_loaded;
         }
-        write_time += omp_get_wtime() - clock;
-
-        block_num += blocks_loaded;
     }
-
-    for (uint i = 0; i < cant_compressors; i ++) {
-        delete comps[i]->decode_buf;
-        delete comps[i];
-    }
-    delete [] comps;
-
-    delete_global_stats(cm);
+    //We use this goto flag to break the double loop
+    finishdecode:
 
     dec_time = omp_get_wtime() - start_time;
 
@@ -639,6 +640,16 @@ int decode(int in_fd, int out_fd, enano_params* p) {
 #endif
     fprintf(stdout, "Total time: %.2f s\n",
             (double)dec_time);
+
+    for (uint i = 0; i < cant_compressors; i ++) {
+        delete comps[i]->decode_buf;
+        if (comps[i]->cm != cm)
+            delete comps[i]->cm;
+        delete comps[i];
+    }
+    delete [] comps;
+
+    delete_global_stats(cm);
 
     return res;
 }

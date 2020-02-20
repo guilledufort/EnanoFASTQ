@@ -367,12 +367,10 @@ void Compressor::decode_seq8(RangeCoder *rc, char *seq, int len) {
 
     for (int i = 0; i < len; i++) {
         unsigned char b;
-        
         if (updateModel)
             b = cm->model_seq8[last].decodeSymbol(rc);
         else
             b = cm->model_seq8[last].decodeSymbolNoUpdate(rc);
-
         *seq++ = dec[b];
         last = UPDATE_CONTEXT(last, b);
     }
