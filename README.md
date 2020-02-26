@@ -41,7 +41,7 @@ make
 
 # USAGE
 
-```bash 
+```console 
 To compress:
   enano [options] [input_file [output_file]]
 
@@ -57,7 +57,6 @@ To decompress:
    enano -d [options] foo.enano foo.fastq
     -t <num>       Maximum number of threads allowed to use by the decompressor. Default is 8.
 ```
-
 
 ## Datasets information
 
