@@ -96,7 +96,7 @@ To install *wget* on Ubuntu or CentOS run:
 sudo apt-get install wget
 ```
 
-Some datasets require the SRA toolkit (2.9.6-1 release) to be downloaded. To install the SRA toolkit you can follow the instructions here https://ncbi.github.io/sra-tools/install_config.html, and place the toolkit's root-folder under the EnanoFASTQ directory, or you can run one of the scripts we built. There is a different script for each OS, so you have to choose the one corresponding to your OS.
+Some datasets require the SRA toolkit (2.9.6-1 release) to be downloaded. To install the SRA toolkit you can follow the instructions here https://ncbi.github.io/sra-tools/install_config.html, and place the toolkit's root-folder under the EnanoFASTQ directory, or you can run one of the scripts we provide. There is a different script for each OS, so you have to choose the one corresponding to your OS.
 For example, to install the SRA toolkit on macOS you can run:
  ```bash
 cd EnanoFASTQ
