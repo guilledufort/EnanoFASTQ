@@ -62,7 +62,7 @@ To decompress:
 
 To test our compressor we ran experiments on the following datasets. The full information of the datasets is on our publication.
 
-| Dataset | # of files | size (GB) | Description | Link |
+| Dataset | Num. of files | size (GB) | Description | Link |
 |------|------|------|------|------|
  *sor\** | 4 | 124.071 | Sorghum bicolor Tx430 | https://www.nature.com/articles/s41467-018-07271-1#data-availability |
  *bra\** | 18 | 43.014 | Doubled haploid canola (Brassica napus L.) | https://www.nature.com/articles/s41598-019-45131-0#data-availability |
