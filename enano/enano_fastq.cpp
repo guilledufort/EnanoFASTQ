@@ -6,6 +6,11 @@ FILE *fp_log_debug = NULL;
 unsigned int debug_count = 0;
 #endif
 
+#ifdef __GLOBAL_STATS__
+double under_T = 0;
+double over_T = 0;
+#endif
+
 /* --------------------------------------------------------------------------
  * Compression functions.
  */
@@ -364,15 +369,24 @@ int encode(int in_fd, int out_fd, enano_params* p) {
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
 #endif
-    fprintf(stdout, "Total time: %.2f s\n",
-            (double)enc_time);
+    
+    fprintf(stdout, "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
 
-    fprintf(stdout, "Names %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    fprintf(stdout, "IDs   %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             name_in, name_out, (double) name_out / name_in);
     fprintf(stdout, "Bases %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             base_in, base_out, (double) base_out / base_in);
     fprintf(stdout, "Quals %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
+    fprintf(stdout, "Total %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+            name_in + base_in + qual_in, name_out + base_out + qual_out, (double) (name_out + base_out + qual_out) / (name_in + base_in + qual_in));
+    fprintf(stdout, "Total compression time: %.2f s\n",
+            (double)enc_time);
+
+#ifdef __GLOBAL_STATS__
+    fprintf(stdout, "Under T %0.1f\% Over T %0.1f\% \n",
+            under_T * 100 / (over_T + under_T), over_T * 100 / (over_T + under_T));
+#endif
 
     return res;
 }
@@ -432,15 +446,19 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
 #endif
-    fprintf(stdout, "Total time: %.2f s\n",
-            (double)enc_time);
+    
+    fprintf(stdout, "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
 
-    fprintf(stdout, "Names %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    fprintf(stdout, "IDs   %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             name_in, name_out, (double) name_out / name_in);
     fprintf(stdout, "Bases %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             base_in, base_out, (double) base_out / base_in);
     fprintf(stdout, "Quals %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
+    fprintf(stdout, "Total %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+            name_in + base_in + qual_in, name_out + base_out + qual_out, (double) (name_in + base_in + qual_in) / (name_out + base_out + qual_out));
+    fprintf(stdout, "Total compression time: %.2f s\n",
+            (double)enc_time);
 
     return res;
 }
@@ -638,7 +656,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
 #endif
-    fprintf(stdout, "Total time: %.2f s\n",
+    fprintf(stdout, "Total decompression time: %.2f s\n",
             (double)dec_time);
 
     for (uint i = 0; i < cant_compressors; i ++) {
@@ -700,7 +718,7 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
     fprintf(stdout, "Write time: %.2f s\n",
             (double)write_time);
 #endif
-    fprintf(stdout, "Total time: %.2f s\n",
+    fprintf(stdout, "Total decompression time: %.2f s\n",
             (double)dec_time);
 
     return res;

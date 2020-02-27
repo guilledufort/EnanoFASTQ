@@ -6,6 +6,11 @@ FILE *fp_log_debug = NULL;
 unsigned int debug_count = 0;
 #endif
 
+#ifdef __GLOBAL_STATS__
+extern double under_T;
+extern double over_T;
+#endif
+
 /* -------------------------------------------------------------------------
  * Constructors and destructors
  */
@@ -460,23 +465,41 @@ void Compressor::encode_qual(RangeCoder *rc, char *seq, char *qual, int len) {
         if (updateModel) {
             if (maxCompression) {
                 if (q1 < QUANT_D_MAX) {
+                    #ifdef __GLOBAL_STATS__
+                    under_T++;
+                    #endif
                     cm->model_qual_quant[ctx].encodeSymbolOrder(rc, q1);
                 } else {
+                    #ifdef __GLOBAL_STATS__
+                    over_T++;
+                    #endif
                     cm->model_qual_quant[ctx].encodeSymbolOrder(rc, QUANT_D_MAX);
                     cm->quant_top.encodeSymbolOrder(rc, q1 - QUANT_D_MAX);
                 }
             } else {
                 if (q1 < QUANT_D_MAX) {
+                    #ifdef __GLOBAL_STATS__
+                    under_T++;
+                    #endif
                     cm->model_qual_quant[ctx].encodeSymbol(rc, q1);
                 } else {
+                    #ifdef __GLOBAL_STATS__
+                    over_T++;
+                    #endif
                     cm->model_qual_quant[ctx].encodeSymbol(rc, QUANT_D_MAX);
                     cm->quant_top.encodeSymbol(rc, q1 - QUANT_D_MAX);
                 }
             }
         } else {
             if (q1 < QUANT_D_MAX) {
+                #ifdef __GLOBAL_STATS__
+                under_T++;
+                #endif
                 cm->model_qual_quant[ctx].encodeSymbolNoUpdate(rc, q1);
             } else {
+                    #ifdef __GLOBAL_STATS__
+                    over_T++;
+                    #endif
                 cm->model_qual_quant[ctx].encodeSymbolNoUpdate(rc, QUANT_D_MAX);
                 cm->quant_top.encodeSymbolNoUpdate(rc, q1 - QUANT_D_MAX);
             }

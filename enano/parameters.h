@@ -36,6 +36,7 @@ static const unsigned int pow5[] = {
 };
 
 #define DUPLICATE_NAME_LINES
+//#define __GLOBAL_STATS__
 //#define __DEBUG_LOG__
 //#define __CONTEXT_STATS__
 
