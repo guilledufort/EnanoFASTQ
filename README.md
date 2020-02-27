@@ -41,7 +41,7 @@ make
 
 # USAGE
 
-```bash 
+```console 
 To compress:
   enano [options] [input_file [output_file]]
 
@@ -58,12 +58,11 @@ To decompress:
     -t <num>       Maximum number of threads allowed to use by the decompressor. Default is 8.
 ```
 
-
 ## Datasets information
 
 To test our compressor we ran experiments on the following datasets. The full information of the datasets is on our publication.
 
-| Dataset | # of files | size (GB) | Description | Link |
+| Dataset | Num. of files | size (GB) | Description | Link |
 |------|------|------|------|------|
  *sor\** | 4 | 124.071 | Sorghum bicolor Tx430 | https://www.nature.com/articles/s41467-018-07271-1#data-availability |
  *bra\** | 18 | 43.014 | Doubled haploid canola (Brassica napus L.) | https://www.nature.com/articles/s41598-019-45131-0#data-availability |
@@ -97,7 +96,7 @@ To install *wget* on Ubuntu or CentOS run:
 sudo apt-get install wget
 ```
 
-Some datasets require the SRA toolkit (2.9.6-1 release) to be downloaded. To install the SRA toolkit you can follow the instructions here https://ncbi.github.io/sra-tools/install_config.html, and place the toolkit's root-folder under the EnanoFASTQ directory, or you can run one of the scripts we built. There is a different script for each OS, so you have to choose the one corresponding to your OS.
+Some datasets require the SRA toolkit (2.9.6-1 release) to be downloaded. To install the SRA toolkit you can follow the instructions here https://ncbi.github.io/sra-tools/install_config.html, and place the toolkit's root-folder under the EnanoFASTQ directory, or you can run one of the scripts we provide. There is a different script for each OS, so you have to choose the one corresponding to your OS.
 For example, to install the SRA toolkit on macOS you can run:
  ```bash
 cd EnanoFASTQ
