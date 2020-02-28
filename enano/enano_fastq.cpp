@@ -456,9 +456,14 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     fprintf(stdout, "Quals %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
     fprintf(stdout, "Total %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
-            name_in + base_in + qual_in, name_out + base_out + qual_out, (double) (name_in + base_in + qual_in) / (name_out + base_out + qual_out));
+            name_in + base_in + qual_in, name_out + base_out + qual_out, (double) (name_out + base_out + qual_out) / (name_in + base_in + qual_in));
     fprintf(stdout, "Total compression time: %.2f s\n",
             (double)enc_time);
+
+#ifdef __GLOBAL_STATS__
+    fprintf(stdout, "Under T %0.1f\% Over T %0.1f\% \n",
+            under_T * 100 / (over_T + under_T), over_T * 100 / (over_T + under_T));
+#endif
 
     return res;
 }
