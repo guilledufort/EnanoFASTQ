@@ -28,7 +28,7 @@ Compressor::Compressor(enano_params *p) {
     B_CTX = (1 << (B_CTX_LEN * A_LOG));
     AVG_CANT = (B_CTX * Q_CTX);
     B_MASK = (B_CTX - 1);
-    NS_MODEL_SIZE = pow5[p->slevel];
+    NS_MODEL_SIZE = pow5[p->klevel];
 
     for (uint i = 0; i < 256; i++)
         not_nl[i] = 1;

@@ -743,7 +743,7 @@ static void usage(int err) {
 
     fprintf(fp, "To compress:\n  enano [options] [input_file [output_file]]\n\n");
     fprintf(fp, "    -c             To use MAX COMPRESION MODE. Default is FAST MODE.\n\n");
-    fprintf(fp, "    -s <length>    Base sequence context length. Default is 7 (max 13).\n\n");
+    fprintf(fp, "    -k <length>    Base sequence context length. Default is 7 (max 13).\n\n");
     fprintf(fp, "    -l <lenght>    Length of the DNA sequence context. Default is 6.\n\n");
     fprintf(fp, "    -t <num>       Maximum number of threads allowed to use by the compressor. Default is 8.\n\n");
 
@@ -762,14 +762,14 @@ int main (int argc, char **argv) {
 
     enano_params p;
     /* Initialise and parse command line arguments */
-    p.slevel = DEFAULT_S_LEVEL;
+    p.klevel = DEFAULT_K_LEVEL;
     p.llevel = DEFAULT_L_LEVEL;
     p.num_threads = DEFAULT_THREADS_NUM;
     p.blk_upd_freq = DEFAULT_BLK_UPD_FREQ;
     p.blk_upd_thresh = DEFAULT_BLK_UPD_THRESH;
     p.max_comp = false;
 
-    while ((opt = getopt(argc, argv, "hds:l:t:cb:")) != -1) {
+    while ((opt = getopt(argc, argv, "hdk:l:t:cb:")) != -1) {
         switch (opt) {
             case 'h':
                 usage(0);
@@ -778,10 +778,10 @@ int main (int argc, char **argv) {
                 decompress = 1;
                 break;
 
-            case 's': {
+            case 'k': {
                 char *end;
-                p.slevel = strtol(optarg, &end, 10);
-                if (p.slevel < 0 || p.slevel > 13)
+                p.klevel = strtol(optarg, &end, 10);
+                if (p.klevel < 0 || p.klevel > 13)
                     usage(1);
                 break;
             }
@@ -852,10 +852,10 @@ int main (int argc, char **argv) {
             return 1;
         }
 
-        p.slevel = magic[5] & 0x0f;
-        if (p.slevel > 13 || p.slevel < 1) {
+        p.klevel = magic[5] & 0x0f;
+        if (p.klevel > 13 || p.klevel < 1) {
             fprintf(stderr, "Unexpected quality compression level %d\n",
-                    p.slevel);
+                    p.klevel);
             return 1;
         }
 
@@ -865,12 +865,12 @@ int main (int argc, char **argv) {
 
         p.blk_upd_thresh = magic[8] & 0xff;
 
-        printf("Parameters - s: %d, l: %d, b: %d \n", p.slevel, p.llevel, p.blk_upd_thresh);
+        printf("Parameters - k: %d, l: %d, b: %d \n", p.klevel, p.llevel, p.blk_upd_thresh);
 
         B_CTX_LEN = p.llevel;
         B_CTX = (1 << (B_CTX_LEN * A_LOG));
         AVG_CANT = (B_CTX * Q_CTX);
-        NS_MODEL_SIZE = pow5[p.slevel];
+        NS_MODEL_SIZE = pow5[p.klevel];
 
         if (p.max_comp)
             res = decode_st(in_fd, out_fd, &p);
@@ -885,7 +885,7 @@ int main (int argc, char **argv) {
 #endif
         unsigned char magic[9] = {'.', 'e', 'n', 'a',
                                   MAJOR_VERS,
-                                  (unsigned char) p.slevel, (unsigned char) p.llevel, (unsigned char) p.max_comp, (unsigned char) p.blk_upd_thresh
+                                  (unsigned char) p.klevel, (unsigned char) p.llevel, (unsigned char) p.max_comp, (unsigned char) p.blk_upd_thresh
         };
 
         if (9 != write(out_fd, magic, 9)) {
@@ -893,12 +893,12 @@ int main (int argc, char **argv) {
             return 1;
         }
 
-        printf("Parameters - s: %d, l: %d, b: %d \n", p.slevel, p.llevel, p.blk_upd_thresh);
+        printf("Parameters - k: %d, l: %d, b: %d \n", p.klevel, p.llevel, p.blk_upd_thresh);
 
         B_CTX_LEN = p.llevel;
         B_CTX = (1 << (B_CTX_LEN * A_LOG));
         AVG_CANT = (B_CTX * Q_CTX);
-        NS_MODEL_SIZE = pow5[p.slevel];
+        NS_MODEL_SIZE = pow5[p.klevel];
 
         if (p.max_comp)
             res = encode_st(in_fd, out_fd, &p);

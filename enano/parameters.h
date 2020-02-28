@@ -5,7 +5,7 @@
 #define BLK_SIZE 10000000 //10 MB
 
 //Default parameters
-#define DEFAULT_S_LEVEL 7
+#define DEFAULT_K_LEVEL 7
 #define DEFAULT_L_LEVEL 6
 #define DEFAULT_THREADS_NUM 8
 #define DEFAULT_BLK_UPD_THRESH 32

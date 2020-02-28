@@ -68,7 +68,7 @@
  * enano parameter block.
  */
 typedef struct {
-    int slevel;        // -s level
+    int klevel;        // -s level
     int llevel;     // -l length
     int num_threads;
     bool max_comp;
