@@ -47,7 +47,7 @@ To compress:
 
     -c             To use MAX COMPRESION MODE. Default is FAST MODE.
 
-    -s <length>    Base sequence context length. Default is 7.
+    -k <length>    Base sequence context length. Default is 7 (max 13).
 
     -l <lenght>    Length of the DNA sequence context. Default is 6.
 
@@ -109,7 +109,7 @@ cd EnanoFASTQ
 To run the compressor with 4 threads on the example file:
 ```bash
 cd EnanoFASTQ
-enano/enano -s 8 -l 5 -t 4 example/SAMPLE.fastq example/SAMPLE.enano
+enano/enano -k 8 -l 5 -t 4 example/SAMPLE.fastq example/SAMPLE.enano
 ```
 #### Decompress using ENANO
 To decompress with 8 threads the example compressed file:
