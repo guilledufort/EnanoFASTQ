@@ -115,6 +115,7 @@ public:
     uint64_t base_in, base_out;
     uint64_t qual_in, qual_out;
     uint64_t name_in, name_out;
+    uint64_t total_in, total_out;
 
     void compress_r1();
 

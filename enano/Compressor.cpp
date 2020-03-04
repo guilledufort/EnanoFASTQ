@@ -88,6 +88,7 @@ Compressor::Compressor(enano_params *p) {
     name_in = name_out = 0;
     base_in = base_out = 0;
     qual_in = qual_out = 0;
+    total_in = total_out = 0;
 }
 
 void Compressor::update_AccFreqs(context_models* ctx_m, bool decode){
@@ -962,5 +963,6 @@ bool Compressor::output_block(int out_fd){
     comp_len += 4;
 
     int sz = write(out_fd, out_buf, comp_len);
+    total_out += sz;
     return (sz == comp_len) ;
 }

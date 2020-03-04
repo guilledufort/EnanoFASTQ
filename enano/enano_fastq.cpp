@@ -104,6 +104,7 @@ bool load_data(int in_fd, Compressor ** comps, int update_load, uint &blocks_loa
             fprintf(stderr, "Failure to parse and/or compress. Error %d \n", error);
             return true;
         }
+        c->total_in += sz;
 
         blocks_loaded++;
         comp_id++;
@@ -265,7 +266,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
     uint batch = 0;
     uint update_load = update_batches[batch];//MIN(BLK_UPD_FREQ, BLK_UPD_THRESH);
 
-    while (update_blocks < BLK_UPD_THRESH && !(finished = load_data(in_fd, comps, update_load,blocks_loaded,blk_start))) {
+    while (update_blocks < BLK_UPD_THRESH && !(finished = load_data(in_fd, comps, update_load, blocks_loaded, blk_start))) {
         #pragma omp parallel for
         for (uint i = 0; i < blocks_loaded; i++) {
             comps[i]->soft_reset();
@@ -341,6 +342,8 @@ int encode(int in_fd, int out_fd, enano_params* p) {
     printf("Total encoded blocks: %d \n", block_num);
 
     long long name_in = 0, name_out = 0, base_in = 0, base_out = 0, qual_in = 0, qual_out = 0;
+    //We initialize total_out in 9 for the 9 bytes of the header
+    long long total_in = 0, total_out = 9;
     for (uint i = 0; i < cant_compressors; i++) {
         name_in += comps[i]->name_in;
         name_out += comps[i]->name_out;
@@ -348,6 +351,8 @@ int encode(int in_fd, int out_fd, enano_params* p) {
         base_out += comps[i]->base_out;
         qual_in += comps[i]->qual_in;
         qual_out += comps[i]->qual_out;
+        total_in += comps[i]->total_in;
+        total_out += comps[i]->total_out;
     }
 
     for (uint i = 0; i < cant_compressors; i ++)
@@ -379,7 +384,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
     fprintf(stdout, "Quals %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
     fprintf(stdout, "Total %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
-            name_in + base_in + qual_in, name_out + base_out + qual_out, (double) (name_out + base_out + qual_out) / (name_in + base_in + qual_in));
+            total_in, total_out, (double) total_out / total_in);
     fprintf(stdout, "Total compression time: %.2f s\n",
             (double)enc_time);
 
@@ -423,12 +428,17 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     printf("Total encoded blocks: %d \n", block_num);
 
     long long name_in = 0, name_out = 0, base_in = 0, base_out = 0, qual_in = 0, qual_out = 0;
+    //We initialize total_out in 9 for the 9 bytes of the header
+    long long total_in = 0, total_out = 9;
+
     name_in += comps[0]->name_in;
     name_out += comps[0]->name_out;
     base_in += comps[0]->base_in;
     base_out += comps[0]->base_out;
     qual_in += comps[0]->qual_in;
     qual_out += comps[0]->qual_out;
+    total_in += comps[0]->total_in;
+    total_out += comps[0]->total_out;
 
 
     delete comps[0];
@@ -456,7 +466,7 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     fprintf(stdout, "Quals %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
     fprintf(stdout, "Total %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
-            name_in + base_in + qual_in, name_out + base_out + qual_out, (double) (name_out + base_out + qual_out) / (name_in + base_in + qual_in));
+            total_in, total_out, (double) total_out / total_in);
     fprintf(stdout, "Total compression time: %.2f s\n",
             (double)enc_time);
 
