@@ -5,7 +5,7 @@
 ENANO is a novel FASTQ compression algorithm especially designed for nanopore sequencing FASTQ files. We tested ENANO and current state-of-the-art compressors on several publicly available nanopore datasets. The results show that our algorithm consistently achieves the best compression performance on every nanopore dataset, while being computationally efficient in terms of speed and memory requirements when compared to existing alternatives.
 
 ## Requirements
-0. g++ ( >= 4.8)
+0. g++ ( >= 4.8.1)
 1. OpenMP library
 
 ## Download
