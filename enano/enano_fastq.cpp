@@ -377,13 +377,13 @@ int encode(int in_fd, int out_fd, enano_params* p) {
     
     printf( "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
 
-    printf( "IDs   %ld -> %ld (%0.3f)\n",
+    printf( "IDs   %lld -> %lld (%0.3f)\n",
             name_in, name_out, (double) name_out / name_in);
-    printf( "Bases %ld -> %ld (%0.3f)\n",
+    printf( "Bases %lld -> %lld (%0.3f)\n",
             base_in, base_out, (double) base_out / base_in);
-    printf( "Quals %ld -> %ld (%0.3f)\n",
+    printf( "Quals %lld -> %lld (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
-    printf( "Total %ld -> %ld (%0.3f)\n",
+    printf( "Total %lld -> %lld (%0.3f)\n",
             total_in, total_out, (double) total_out / total_in);
     printf( "Total compression time: %.2f s\n",
             (double)enc_time);
@@ -463,13 +463,13 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     
     printf( "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
 
-    printf( "IDs   %ld -> %ld (%0.3f)\n",
+    printf( "IDs   %lld -> %lld (%0.3f)\n",
             name_in, name_out, (double) name_out / name_in);
-    printf( "Bases %ld -> %ld (%0.3f)\n",
+    printf( "Bases %lld -> %lld (%0.3f)\n",
             base_in, base_out, (double) base_out / base_in);
-    printf( "Quals %ld -> %ld (%0.3f)\n",
+    printf( "Quals %lld -> %lld (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
-    printf( "Total %ld -> %ld (%0.3f)\n",
+    printf( "Total %lld -> %lld (%0.3f)\n",
             total_in, total_out, (double) total_out / total_in);
     printf( "Total compression time: %.2f s\n",
             (double)enc_time);
@@ -749,7 +749,6 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
  * Main program entry.
  */
 static void usage(int err) {
-    FILE *fp = err ? stderr : stdout;
 
     printf( "Enano v%d.%d Author Guillermo Dufort y Alvarez, 2019-2020\n",
             MAJOR_VERS, MINOR_VERS);
