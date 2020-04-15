@@ -101,7 +101,7 @@ bool load_data(int in_fd, Compressor ** comps, int update_load, uint &blocks_loa
         int error = 0;
         if (0 > (error = c->fq_parse_reads(in_buf, sz + blk_start,
                                     &in_end, &nseqs, &remainder_length, end))) {
-            fprintf(stderr, "Failure to parse and/or compress. Error %d \n", error);
+            printf( "Failure to parse and/or compress. Error %d \n", error);
             return true;
         }
         c->total_in += sz;
@@ -277,7 +277,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
 
         for (uint i = 0; i < blocks_loaded; i++) {
             if (!comps[i]->output_block(out_fd)) {
-                fprintf(stderr, "Abort: truncated write.\n");
+                printf( "Abort: truncated write.\n");
                 finished = true;
                 res = -1;
                 break;
@@ -329,7 +329,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
         clock = omp_get_wtime();
         for (uint i = 0; i < blocks_loaded; i++) {
             if (!comps[i]->output_block(out_fd)) {
-                fprintf(stderr, "Abort: truncated write.\n");
+                printf( "Abort: truncated write.\n");
                 finished = true;
                 res = -1;
                 break;
@@ -365,31 +365,31 @@ int encode(int in_fd, int out_fd, enano_params* p) {
     enc_time = omp_get_wtime() - start_time;
 
 #ifdef __TIMING__
-    fprintf(stdout, "Update models: %.2f s\n",
+    printf( "Update models: %.2f s\n",
             (double)update_time);
-    fprintf(stdout, "Load time: %.2f s\n",
+    printf( "Load time: %.2f s\n",
             (double)load_time);
-    fprintf(stdout, "Coding time: %.2lf s\n",
+    printf( "Coding time: %.2lf s\n",
             (double)code_time);
-    fprintf(stdout, "Write time: %.2f s\n",
+    printf( "Write time: %.2f s\n",
             (double)write_time);
 #endif
     
-    fprintf(stdout, "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
+    printf( "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
 
-    fprintf(stdout, "IDs   %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "IDs   %ld -> %ld (%0.3f)\n",
             name_in, name_out, (double) name_out / name_in);
-    fprintf(stdout, "Bases %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "Bases %ld -> %ld (%0.3f)\n",
             base_in, base_out, (double) base_out / base_in);
-    fprintf(stdout, "Quals %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "Quals %ld -> %ld (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
-    fprintf(stdout, "Total %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "Total %ld -> %ld (%0.3f)\n",
             total_in, total_out, (double) total_out / total_in);
-    fprintf(stdout, "Total compression time: %.2f s\n",
+    printf( "Total compression time: %.2f s\n",
             (double)enc_time);
 
 #ifdef __GLOBAL_STATS__
-    fprintf(stdout, "Under T %0.1f\% Over T %0.1f\% \n",
+    printf( "Under T %0.1f\% Over T %0.1f\% \n",
             under_T * 100 / (over_T + under_T), over_T * 100 / (over_T + under_T));
 #endif
 
@@ -401,7 +401,11 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
 
     int res = 0;
     double start_time = omp_get_wtime();
-    double enc_time = 0, code_time = 0, load_time = 0, write_time = 0, update_time = 0;
+    double enc_time = 0;
+
+#ifdef __TIMING__
+    double code_time = 0, load_time = 0, write_time = 0, update_time = 0;
+#endif
 
     printf("Starting encoding in Max Compression mode... \n");
 
@@ -418,7 +422,7 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     while (!load_data(in_fd, comps, 1,blocks_loaded,blk_start)) {
         comps[0]->fq_compress();
         if (!comps[0]->output_block(out_fd)) {
-            fprintf(stderr, "Abort: truncated write.\n");
+            printf( "Abort: truncated write.\n");
             res = -1;
             break;
         }
@@ -447,31 +451,31 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
     enc_time = omp_get_wtime() - start_time;
 
 #ifdef __TIMING__
-    fprintf(stdout, "Update models: %.2f s\n",
+    printf( "Update models: %.2f s\n",
             (double)update_time);
-    fprintf(stdout, "Load time: %.2f s\n",
+    printf( "Load time: %.2f s\n",
             (double)load_time);
-    fprintf(stdout, "Coding time: %.2lf s\n",
+    printf( "Coding time: %.2lf s\n",
             (double)code_time);
-    fprintf(stdout, "Write time: %.2f s\n",
+    printf( "Write time: %.2f s\n",
             (double)write_time);
 #endif
     
-    fprintf(stdout, "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
+    printf( "Stream <original size in bytes> -> <compressed size in bytes> (<compression ratio>)\n");
 
-    fprintf(stdout, "IDs   %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "IDs   %ld -> %ld (%0.3f)\n",
             name_in, name_out, (double) name_out / name_in);
-    fprintf(stdout, "Bases %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "Bases %ld -> %ld (%0.3f)\n",
             base_in, base_out, (double) base_out / base_in);
-    fprintf(stdout, "Quals %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "Quals %ld -> %ld (%0.3f)\n",
             qual_in, qual_out, (double) qual_out / qual_in);
-    fprintf(stdout, "Total %" PRIu64 " -> %" PRIu64 " (%0.3f)\n",
+    printf( "Total %ld -> %ld (%0.3f)\n",
             total_in, total_out, (double) total_out / total_in);
-    fprintf(stdout, "Total compression time: %.2f s\n",
+    printf( "Total compression time: %.2f s\n",
             (double)enc_time);
 
 #ifdef __GLOBAL_STATS__
-    fprintf(stdout, "Under T %0.1f\% Over T %0.1f\% \n",
+    printf( "Under T %0.1f\% Over T %0.1f\% \n",
             under_T * 100 / (over_T + under_T), over_T * 100 / (over_T + under_T));
 #endif
 
@@ -480,7 +484,7 @@ int encode_st(int in_fd, int out_fd, enano_params* p) {
 
 bool load_data_decode(int in_fd, Compressor ** comps, int update_load, uint &blocks_loaded) {
 
-    bool res = 0;
+    int res = 0;
     unsigned char len_buf[4];
     int sz;
 
@@ -504,13 +508,13 @@ bool load_data_decode(int in_fd, Compressor ** comps, int update_load, uint &blo
                 continue;
 
             if (tmp_len == -1) {
-                fprintf(stderr, "Abort: read failed, %d.\n", errno);
+                printf( "Abort: read failed, %d.\n", errno);
                 perror("foo");
                 res = -1;
                 goto error;
             }
             if (tmp_len == 0) {
-                fprintf(stderr, "Abort: truncated read, %d.\n", errno);
+                printf( "Abort: truncated read, %d.\n", errno);
                 res = -1;
                 goto error;
             }
@@ -522,7 +526,7 @@ bool load_data_decode(int in_fd, Compressor ** comps, int update_load, uint &blo
         comp_id++;
     }
     error:
-    return blocks_loaded <= 0 || res == -1;
+    return (blocks_loaded <= 0) || (res == -1);
 }
 
 /*
@@ -592,7 +596,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
         //Write output
         for (uint i = 0; i < blocks_loaded; i++) {
             if (comps[i]->uncomp_len != write(out_fd, comps[i]->out_buf, comps[i]->uncomp_len)) {
-                fprintf(stderr, "Abort: truncated write.\n");
+                printf( "Abort: truncated write.\n");
                 res = -1;
                 goto finishdecode;
             }
@@ -644,7 +648,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
             clock = omp_get_wtime();
             for (uint i = 0; i < blocks_loaded; i ++) {
                 if (comps[i]->uncomp_len != write(out_fd, comps[i]->out_buf, comps[i]->uncomp_len)) {
-                    fprintf(stderr, "Abort: truncated write.\n");
+                    printf( "Abort: truncated write.\n");
                     res = -1;
                     goto finishdecode;
                 }
@@ -659,19 +663,19 @@ int decode(int in_fd, int out_fd, enano_params* p) {
 
     dec_time = omp_get_wtime() - start_time;
 
-    printf("Total decoded blocks: %d\n", block_num, BLK_UPD_THRESH);
+    printf("Total decoded blocks: %d\n", block_num);
 
 #ifdef __TIMING__
-    fprintf(stdout, "Update models: %.2f s\n",
+    printf( "Update models: %.2f s\n",
             (double)update_time);
-    fprintf(stdout, "Load time: %.2f s\n",
+    printf( "Load time: %.2f s\n",
             (double)load_time);
-    fprintf(stdout, "Coding time: %.2lf s\n",
+    printf( "Coding time: %.2lf s\n",
             (double)decode_time);
-    fprintf(stdout, "Write time: %.2f s\n",
+    printf( "Write time: %.2f s\n",
             (double)write_time);
 #endif
-    fprintf(stdout, "Total decompression time: %.2f s\n",
+    printf( "Total decompression time: %.2f s\n",
             (double)dec_time);
 
     for (uint i = 0; i < cant_compressors; i ++) {
@@ -690,8 +694,10 @@ int decode(int in_fd, int out_fd, enano_params* p) {
 int decode_st (int in_fd, int out_fd, enano_params* p) {
     int res = 0;
     double start_time = omp_get_wtime();
-    double dec_time = 0, decode_time = 0, load_time = 0, write_time = 0, update_time = 0;
-
+    double dec_time = 0;
+#ifdef __TIMING__
+    decode_time = 0, load_time = 0, write_time = 0, update_time = 0;
+#endif
     printf("Starting decoding Max Compression mode... \n");
 
     uint block_num = 0;
@@ -708,7 +714,7 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
         comps[0]->fq_decompress();
         //Write output
         if (comps[0]->uncomp_len != write(out_fd, comps[0]->out_buf, comps[0]->uncomp_len)) {
-            fprintf(stderr, "Abort: truncated write.\n");
+            printf( "Abort: truncated write.\n");
             res = -1;
             break;
         }
@@ -724,16 +730,16 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
     printf("Total decoded blocks: %d\n", block_num);
 
 #ifdef __TIMING__
-    fprintf(stdout, "Update models: %.2f s\n",
+    printf( "Update models: %.2f s\n",
             (double)update_time);
-    fprintf(stdout, "Load time: %.2f s\n",
+    printf( "Load time: %.2f s\n",
             (double)load_time);
-    fprintf(stdout, "Coding time: %.2lf s\n",
+    printf( "Coding time: %.2lf s\n",
             (double)decode_time);
-    fprintf(stdout, "Write time: %.2f s\n",
+    printf( "Write time: %.2f s\n",
             (double)write_time);
 #endif
-    fprintf(stdout, "Total decompression time: %.2f s\n",
+    printf( "Total decompression time: %.2f s\n",
             (double)dec_time);
 
     return res;
@@ -745,20 +751,20 @@ int decode_st (int in_fd, int out_fd, enano_params* p) {
 static void usage(int err) {
     FILE *fp = err ? stderr : stdout;
 
-    fprintf(fp, "Enano v%d.%d Author Guillermo Dufort y Alvarez, 2019-2020\n",
+    printf( "Enano v%d.%d Author Guillermo Dufort y Alvarez, 2019-2020\n",
             MAJOR_VERS, MINOR_VERS);
-    fprintf(fp, "The methods used for encoding the reads identifiers, and to model frequency counters, \n");
-    fprintf(fp, "are the ones proposed by James Bonefield in FQZComp, with some modifications.\n");
-    fprintf(fp, "The range coder is derived from Eugene Shelwien.\n\n");
+    printf( "The methods used for encoding the reads identifiers, and to model frequency counters, \n");
+    printf( "are the ones proposed by James Bonefield in FQZComp, with some modifications.\n");
+    printf( "The range coder is derived from Eugene Shelwien.\n\n");
 
-    fprintf(fp, "To compress:\n  enano [options] [input_file [output_file]]\n\n");
-    fprintf(fp, "    -c             To use MAX COMPRESION MODE. Default is FAST MODE.\n\n");
-    fprintf(fp, "    -k <length>    Base sequence context length. Default is 7 (max 13).\n\n");
-    fprintf(fp, "    -l <lenght>    Length of the DNA sequence context. Default is 6.\n\n");
-    fprintf(fp, "    -t <num>       Maximum number of threads allowed to use by the compressor. Default is 8.\n\n");
+    printf( "To compress:\n  enano [options] [input_file [output_file]]\n\n");
+    printf( "    -c             To use MAX COMPRESION MODE. Default is FAST MODE.\n\n");
+    printf( "    -k <length>    Base sequence context length. Default is 7 (max 13).\n\n");
+    printf( "    -l <lenght>    Length of the DNA sequence context. Default is 6.\n\n");
+    printf( "    -t <num>       Maximum number of threads allowed to use by the compressor. Default is 8.\n\n");
 
-    fprintf(fp, "To decompress:\n   enano -d [options] foo.enano foo.fastq\n");
-    fprintf(fp, "    -t <num>       Maximum number of threads allowed to use by the decompressor. Default is 8.\n\n");
+    printf( "To decompress:\n   enano -d [options] foo.enano foo.fastq\n");
+    printf( "    -t <num>       Maximum number of threads allowed to use by the decompressor. Default is 8.\n\n");
 
     exit(err);
 }
@@ -783,7 +789,7 @@ int main (int argc, char **argv) {
         switch (opt) {
             case 'h':
                 usage(0);
-
+                break;
             case 'd':
                 decompress = 1;
                 break;
@@ -791,7 +797,7 @@ int main (int argc, char **argv) {
             case 'k': {
                 char *end;
                 p.klevel = strtol(optarg, &end, 10);
-                if (p.klevel < 0 || p.klevel > 13)
+                if (p.klevel > 13)
                     usage(1);
                 break;
             }
@@ -849,22 +855,22 @@ int main (int argc, char **argv) {
 
         /* Check magic number */
         if (9 != read(in_fd, magic, 9)) {
-            fprintf(stderr, "Abort: truncated read.\n");
+            printf( "Abort: truncated read.\n");
             return 1;
         }
         if (memcmp(".ena", magic, 4) != 0) {
-            fprintf(stderr, "Unrecognised file format.\n");
+            printf( "Unrecognised file format.\n");
             return 1;
         }
         if (magic[4] != MAJOR_VERS) {
-            fprintf(stderr, "Unsupported file format version %d.%d\n",
+            printf( "Unsupported file format version %d.%d\n",
                     magic[4], magic[5]);
             return 1;
         }
 
         p.klevel = magic[5] & 0x0f;
         if (p.klevel > 13 || p.klevel < 1) {
-            fprintf(stderr, "Unexpected quality compression level %d\n",
+            printf( "Unexpected quality compression level %d\n",
                     p.klevel);
             return 1;
         }
@@ -899,7 +905,7 @@ int main (int argc, char **argv) {
         };
 
         if (9 != write(out_fd, magic, 9)) {
-            fprintf(stderr, "Abort: truncated write.\n");
+            printf( "Abort: truncated write.\n");
             return 1;
         }
 

@@ -68,12 +68,12 @@
  * enano parameter block.
  */
 typedef struct {
-    int klevel;        // -s level
-    int llevel;     // -l length
-    int num_threads;
+    uint8_t klevel;        // -s level
+    uint8_t llevel;     // -l length
+    uint8_t num_threads;
     bool max_comp;
-    int blk_upd_freq;
-    int blk_upd_thresh;
+    uint8_t blk_upd_freq;
+    uint8_t blk_upd_thresh;
 } enano_params;
 
 typedef struct {

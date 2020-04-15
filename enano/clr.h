@@ -81,7 +81,7 @@ public:
         return code / (range /= totFreq);
     }
 
-    void Decode(uint cumFreq, uint freq, uint totFreq) {
+    void Decode(uint cumFreq, uint freq) {
         uint temp = cumFreq * range;
         low += temp;
         code -= temp;
@@ -93,5 +93,4 @@ public:
             code = (code << 8) | *in_buf++, range <<= 8, low <<= 8;
         }
     }
-
 };

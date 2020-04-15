@@ -206,7 +206,7 @@ inline uint16_t SIMPLE_MODEL<NSYM>::decodeSymbol(RangeCoder *rc) {
     for (AccFreq = 0; (AccFreq += s->Freq) <= freq; s++);
     AccFreq -= s->Freq;
 
-    rc->Decode(AccFreq, s->Freq, TotFreq);
+    rc->Decode(AccFreq, s->Freq);
     s->Freq += STEP;
     TotFreq += STEP;
 
@@ -225,7 +225,7 @@ inline uint16_t SIMPLE_MODEL<NSYM>::decodeSymbolOrder(RangeCoder *rc) {
     for (AccFreq = 0; (AccFreq += s->Freq) <= freq; s++);
     AccFreq -= s->Freq;
 
-    rc->Decode(AccFreq, s->Freq, TotFreq);
+    rc->Decode(AccFreq, s->Freq);
     s->Freq += STEP;
     TotFreq += STEP;
 
@@ -252,7 +252,7 @@ inline uint16_t SIMPLE_MODEL<NSYM>::decodeSymbolNoUpdate(RangeCoder *rc) {
 
     for (; s->AccFreq <= freq; s++);
 
-    rc->Decode(s->AccFreq - s->Freq, s->Freq, TotFreq);
+    rc->Decode(s->AccFreq - s->Freq, s->Freq);
 
     return s->Symbol;
 }

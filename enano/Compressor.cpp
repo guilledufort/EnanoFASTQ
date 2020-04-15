@@ -391,6 +391,7 @@ inline uint Compressor::get_context(unsigned char b, unsigned char q1, unsigned 
 
     int err;
     uint nctx;
+    uint avg_err;
 
     //Update averages
     nctx = (B_prev_ctx << TOTAL_Q_LOG) + Q_prev_ctx;
@@ -430,14 +431,14 @@ inline uint Compressor::get_context(unsigned char b, unsigned char q1, unsigned 
 
     uint avg = QBin[DIV_ROUND(ctx_avgs_sums[nctx], AVG_SHIFT)];
     uint total_err_avg = (ctx_err_avgs_total[Q_prev_ctx] >> (TOTAL_ERR_SHIFT - AVG_SHIFT));
-    err = ctx_avgs_err_sums[nctx];
+    avg_err = ctx_avgs_err_sums[nctx];
     uint err_c = 0;
 
-    if (err < (total_err_avg >> 1))
+    if (avg_err < (total_err_avg >> 1))
         err_c = 0;
-    else if (err < total_err_avg)
+    else if (avg_err < total_err_avg)
         err_c = 1;
-    else if (err <  (total_err_avg << 1))
+    else if (avg_err <  (total_err_avg << 1))
         err_c = 2;
     else
         err_c = 3;

@@ -209,30 +209,30 @@ inline uint BASE_MODEL<st_t>::decodeSymbol(RangeCoder *rc) {
 
     st_t* p=Stats;
     if ((HiCount += *p) > count) {
-	rc->Decode(0, *p, SummFreq);
+	rc->Decode(0, *p);
 	Stats[0] += STEP;
 	return 0;
     }
 
     if ((HiCount += *++p) > count) {
-	rc->Decode(HiCount-*p, *p, SummFreq);
+	rc->Decode(HiCount-*p, *p);
 	Stats[1] += STEP;
 	return 1;
     }
 
     if ((HiCount += *++p) > count) {
-	rc->Decode(HiCount-*p, *p, SummFreq);
+	rc->Decode(HiCount-*p, *p);
 	Stats[2] += STEP;
 	return 2;
     }
 
     if ((HiCount += *++p) > count) {
-    rc->Decode(HiCount-*p, *p, SummFreq);
+    rc->Decode(HiCount-*p, *p);
     Stats[3] += STEP;
     return 3;
     }
 
-    rc->Decode(HiCount, Stats[4], SummFreq);
+    rc->Decode(HiCount, Stats[4]);
     Stats[4] += STEP;
     return 4;
 }
@@ -246,25 +246,25 @@ inline uint BASE_MODEL<st_t>::decodeSymbolNoUpdate(RangeCoder *rc) {
 
     st_t* p=Stats;
     if ((HiCount += *p) > count) {
-        rc->Decode(0, *p, SummFreq);
+        rc->Decode(0, *p);
         return 0;
     }
 
     if ((HiCount += *++p) > count) {
-        rc->Decode(HiCount-*p, *p, SummFreq);
+        rc->Decode(HiCount-*p, *p);
         return 1;
     }
 
     if ((HiCount += *++p) > count) {
-        rc->Decode(HiCount-*p, *p, SummFreq);
+        rc->Decode(HiCount-*p, *p);
         return 2;
     }
 
     if ((HiCount += *++p) > count) {
-        rc->Decode(HiCount-*p, *p, SummFreq);
+        rc->Decode(HiCount-*p, *p);
         return 3;
     }
 
-    rc->Decode(HiCount, Stats[4], SummFreq);
+    rc->Decode(HiCount, Stats[4]);
     return 4;
 }
