@@ -129,26 +129,26 @@ cd EnanoFASTQ
 ./install_SRA_mac.sh
 ```
 
-### Examples
+## Examples
 If installed using conda, use the command `enano` instead of `enano/enano`.
 
-#### Compress using ENANO
+### Compress using ENANO
 To run the compressor with 4 threads on the example file:
 ```bash
 cd EnanoFASTQ
 enano/enano -k 8 -l 5 -t 4 example/SAMPLE.fastq example/SAMPLE.enano
 ```
-#### Decompress using ENANO
+### Decompress using ENANO
 To decompress with 8 threads the example compressed file:
 ```bash
 cd EnanoFASTQ
 enano/enano -d -t 8 example/SAMPLE.enano example/SAMPLE_dec.fastq
 ```
 
-#### Check if decoding is successful
+### Check if decoding is successful
 The output has to be empty.
 ```bash
 cmp example/SAMPLE.fastq example/SAMPLE_dec.fastq
 ```
-### Credits
+## Credits
 The methods used for encoding the reads names, model frequency counters, and to do the reads parsing, are the ones proposed by James Bonefield in FQZComp, with some modifications. The range coder is derived from Eugene Shelwien.
