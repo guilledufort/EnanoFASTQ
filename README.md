@@ -4,7 +4,7 @@
 ## Description
 ENANO is a FASTQ compression algorithm especially designed for nanopore sequencing FASTQ files. We tested ENANO and current state-of-the-art compressors on several publicly available nanopore datasets. The results show that our algorithm consistently achieves the best compression performance on every nanopore dataset, while being computationally efficient in terms of speed and memory requirements when compared to existing alternatives.
 
-## Install with conda on Linux or MacOS
+## Install with Conda
 To install directly from source, follow the instructions in the next section.
 
 Enano is available on conda via the bioconda channel. See [this](https://bioconda.github.io/user/install.html) page for installation instructions for conda. Once conda is installed, do the following to install enano.
@@ -17,6 +17,8 @@ conda install enano
 Note that if enano is installed this way, it should be invoked with the command `enano` rather than `./enano`. The bioconda [help page](https://bioconda.github.io/user/install.html) shows the commands if you wish to install enano in an environment.
 
 ## Install from source code
+
+### Download repository
 ```bash
 git clone https://github.com/guilledufort/EnanoFASTQ.git
 ```
