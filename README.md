@@ -2,19 +2,32 @@
 ## An encoder for nanopore FASTQ files
 #### Publication: on review
 ## Description
-ENANO is a novel FASTQ compression algorithm especially designed for nanopore sequencing FASTQ files. We tested ENANO and current state-of-the-art compressors on several publicly available nanopore datasets. The results show that our algorithm consistently achieves the best compression performance on every nanopore dataset, while being computationally efficient in terms of speed and memory requirements when compared to existing alternatives.
+ENANO is a FASTQ lossless compression algorithm especially designed for nanopore sequencing FASTQ files. We tested ENANO and current state-of-the-art compressors on several publicly available nanopore datasets. The results show that our algorithm consistently achieves the best compression performance on every nanopore dataset, while being computationally efficient in terms of speed and memory requirements when compared to existing alternatives.
 
-## Requirements
-0. g++ ( >= 4.8.1)
-1. OpenMP library
+## Install with Conda
+To install directly from source, follow the instructions in the next section.
 
-## Download
+Enano is available on conda via the bioconda channel. See [this](https://bioconda.github.io/user/install.html) page for installation instructions for conda. Once conda is installed, do the following to install enano.
+```bash
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install enano
+```
+Note that if enano is installed this way, it should be invoked with the command `enano` rather than `./enano`. The bioconda [help page](https://bioconda.github.io/user/install.html) shows the commands if you wish to install enano in an environment.
 
+## Install from source code
+
+### Download repository
 ```bash
 git clone https://github.com/guilledufort/EnanoFASTQ.git
 ```
 
-## Install 
+### Requirements
+0. g++ ( >= 4.8.1)
+1. OpenMP library
+
+### Install 
 
 The following instructions will create the enano executable in the directory *enano*.
 To compile enano you need to have the g++ compiler and the OpenMP library for multithreading. 
@@ -33,6 +46,19 @@ brew update
 brew install gcc@9
 ```
 
+The OpenMP library comes installed with the g++ compiler, so there is no need to perform specific actions to install it.
+To check if the g++ compiler is properly installed in your system run:
+
+On Linux
+```bash
+g++ --version
+```
+On MacOS:
+```bash
+g++-9 --version
+```
+The output should be the description of the installed software.
+
 To compile enano run:
 ```bash
 cd EnanoFASTQ/enano
@@ -40,7 +66,7 @@ make
 ```
 
 # USAGE
-
+Run the enano executable ```/PATH/TO/enano``` (or just ```enano``` if installed with conda) with the options below:
 ```console 
 To compress:
   enano [options] [input_file [output_file]]
@@ -103,25 +129,26 @@ cd EnanoFASTQ
 ./install_SRA_mac.sh
 ```
 
-### Examples
+## Examples
+If installed using conda, use the command `enano` instead of `enano/enano`.
 
-#### Compress using ENANO
+### Compress using ENANO
 To run the compressor with 4 threads on the example file:
 ```bash
 cd EnanoFASTQ
 enano/enano -k 8 -l 5 -t 4 example/SAMPLE.fastq example/SAMPLE.enano
 ```
-#### Decompress using ENANO
+### Decompress using ENANO
 To decompress with 8 threads the example compressed file:
 ```bash
 cd EnanoFASTQ
 enano/enano -d -t 8 example/SAMPLE.enano example/SAMPLE_dec.fastq
 ```
 
-#### Check if decoding is successful
+### Check if decoding is successful
 The output has to be empty.
 ```bash
 cmp example/SAMPLE.fastq example/SAMPLE_dec.fastq
 ```
-### Credits
+## Credits
 The methods used for encoding the reads names, model frequency counters, and to do the reads parsing, are the ones proposed by James Bonefield in FQZComp, with some modifications. The range coder is derived from Eugene Shelwien.
