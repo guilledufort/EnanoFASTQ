@@ -1,3 +1,25 @@
+// MIT License
+
+// Copyright (c) 2020 Guillermo Dufort y Álvarez
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #include "Compressor.h"
 #include <omp.h>
 
@@ -314,7 +336,7 @@ int encode(int in_fd, int out_fd, enano_params* p) {
 
         //Load and parse the data for each compressor
         clock = omp_get_wtime();
-        finished = load_data(in_fd, comps, cant_compressors, blocks_loaded, blk_start);
+        finished = load_data(in_fd, comps, p->num_threads, blocks_loaded, blk_start);
         load_time += omp_get_wtime() - clock;
         //Encode the loaded data in parallel in each of the threads
         clock = omp_get_wtime();
@@ -633,7 +655,7 @@ int decode(int in_fd, int out_fd, enano_params* p) {
             uint blocks_loaded = 0;
 
             clock = omp_get_wtime();
-            finished = load_data_decode(in_fd, comps, cant_compressors, blocks_loaded);
+            finished = load_data_decode(in_fd, comps, p->num_threads, blocks_loaded);
             load_time += omp_get_wtime() - clock;
 
             clock = omp_get_wtime();
