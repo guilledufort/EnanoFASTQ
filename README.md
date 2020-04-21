@@ -46,7 +46,7 @@ brew update
 brew install gcc@9
 ```
 
-The OpenMP library comes installed with the g++ compiler, so there is no need to perform specific actions to install it.
+The g++ installer also installs the OpenMP library, so no further steps are needed.
 To check if the g++ compiler is properly installed in your system run:
 
 On Linux
