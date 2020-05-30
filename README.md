@@ -1,6 +1,6 @@
 # ENANO FASTQ
 ## An encoder for nanopore FASTQ files
-#### Publication: on review
+#### Publication: https://doi.org/10.1093/bioinformatics/btaa551
 ## Description
 ENANO is a FASTQ lossless compression algorithm especially designed for nanopore sequencing FASTQ files. We tested ENANO and current state-of-the-art compressors on several publicly available nanopore datasets. The results show that our algorithm consistently achieves the best compression performance on every nanopore dataset, while being computationally efficient in terms of speed and memory requirements when compared to existing alternatives.
 
