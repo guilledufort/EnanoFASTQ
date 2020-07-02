@@ -73,9 +73,9 @@ To compress:
 
     -c             To use MAX COMPRESION MODE. Default is FAST MODE.
 
-    -k <length>    Base sequence context length. Default is 7 (max 13).
+    -k <length>    Basecall sequence context length. Default is 7 (max 13).
 
-    -l <lenght>    Length of the DNA sequence context. Default is 6.
+    -l <lenght>    Length of the DNA neighborhood sequence used in the quality score context. Default is 6.
 
     -t <num>       Maximum number of threads allowed to use by the compressor. Default is 8.
 
